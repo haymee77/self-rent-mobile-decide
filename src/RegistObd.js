@@ -11,6 +11,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -117,15 +118,20 @@ export default () => {
             </div>
             <div>
               <TextField
+                type='number'
                 fullWidth
                 className={classes.regObdBoxText}
                 id='outlined-basic'
                 label='OBD Serial No'
                 variant='outlined'
                 onChange={(e) => {
-                  setDeviceKey(e.target.value);
+                  setDeviceKey(`VONXC${e.target.value}`);
                 }}
-                value={deviceKey}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>VONXC</InputAdornment>
+                  ),
+                }}
               />
             </div>
             <div>
