@@ -222,7 +222,7 @@ export default () => {
         <Box className='search-box' color='primary.main'>
           <form className={classes.searchBoxForm} noValidate autoComplete='off'>
             <TextField
-              type='number'
+              type='tel'
               onChange={handleChangeDeviceKey}
               className={classes.searchBoxText}
               id='outlined-basic'
@@ -232,7 +232,6 @@ export default () => {
                 startAdornment: (
                   <InputAdornment position='start'>VONXC</InputAdornment>
                 ),
-                inputMode: 'numeric',
               }}
             />
             <Button
