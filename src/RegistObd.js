@@ -119,6 +119,7 @@ export default () => {
             <div>
               <TextField
                 type='number'
+                pattern='\d*'
                 fullWidth
                 className={classes.regObdBoxText}
                 id='outlined-basic'
