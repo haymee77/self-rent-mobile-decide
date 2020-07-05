@@ -232,6 +232,7 @@ export default () => {
                 startAdornment: (
                   <InputAdornment position='start'>VONXC</InputAdornment>
                 ),
+                inputMode: 'numeric',
               }}
             />
             <Button

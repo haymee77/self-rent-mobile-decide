@@ -119,7 +119,6 @@ export default () => {
             <div>
               <TextField
                 type='number'
-                pattern='\d*'
                 fullWidth
                 className={classes.regObdBoxText}
                 id='outlined-basic'
@@ -132,6 +131,7 @@ export default () => {
                   startAdornment: (
                     <InputAdornment position='start'>VONXC</InputAdornment>
                   ),
+                  inputMode: 'numeric',
                 }}
               />
             </div>
