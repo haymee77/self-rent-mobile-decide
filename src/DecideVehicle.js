@@ -33,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
   button: {
     marginTop: '5px',
   },
+  wrapBox: {
+    marginTop: '10px',
+  },
 }));
 
 export default ({ match }) => {
@@ -50,10 +53,15 @@ export default ({ match }) => {
     <React.Fragment>
       <CssBaseline />
       <Container maxWidth='sm'>
-        <Box m={'70px auto 10px'}>
+        <Box className={classes.wrapBox}>
           <h2>무인배반 차량 확정</h2>
         </Box>
-        <Box padding={'10px'} bgcolor='text.disabled' color='background.paper'>
+        <Box
+          className={classes.wrapBox}
+          padding={'10px'}
+          bgcolor='text.disabled'
+          color='background.paper'
+        >
           예약자명: {bookerName} <br />
           운전자명: {driverName} <br />
           <br />
@@ -62,7 +70,7 @@ export default ({ match }) => {
           <br />
           차종: {vehicleModelName}
         </Box>
-        <Box margin={'10px 0'} fontSize={12} lineHeight={1.8}>
+        <Box className={classes.wrapBox} fontSize={12} lineHeight={1.8}>
           <Typography variant='subtitle1' className={classes.wrapIcon}>
             <ErrorIcon className={classes.wrapIconIcon} /> 알려드립니다.
           </Typography>
@@ -89,7 +97,7 @@ export default ({ match }) => {
             </li>
           </Typography>
         </Box>
-        <Box marginTop={'10px'}>
+        <Box className={classes.wrapBox}>
           <FormControl
             variant='outlined'
             className={classes.formControl}
