@@ -102,6 +102,28 @@ const DecideVehicle = (props) => {
     }
   };
 
+  const handleClickNoVehicle = () => {
+    if (
+      window.confirm('일반 배차방식으로 전환됩니다. 계속 진행하시겠습니까?')
+    ) {
+      requestCancel().then((result) => {
+        if (result.success) {
+          window.location.reload();
+        }
+      });
+    }
+  };
+
+  const requestCancel = () => {
+    return axios
+      .get(
+        `${process.env.REACT_APP_ZZIMCAR_API_URL}/self-rent/cancel/${bookingPid}`
+      )
+      .then((response) => {
+        return response.data;
+      });
+  };
+
   const requestDecide = () => {
     return axios
       .post(`${process.env.REACT_APP_ZZIMCAR_API_URL}/self-rent/decide`, {
@@ -185,11 +207,11 @@ const DecideVehicle = (props) => {
         display={canceled ? 'none' : decided ? 'block' : 'none'}
         className={classes.wrapBox}
       >
-        이미{' '}
         <Typography variant='button' className={classes.bold7}>
           {decidedCarNo}
         </Typography>{' '}
-        차량으로 확정되었습니다.
+        차량으로 확정되었습니다. 차량이 확정되면 예약자에게 모바일 체크인 링크가
+        전송되며 계약서 작성이 진행되므로 차량 변경이 불가능합니다.
       </Box>
 
       {/* 차량 확정해야할 때 노출 */}
@@ -215,8 +237,8 @@ const DecideVehicle = (props) => {
             반드시 시간 내 차량 확정 바랍니다.
           </li>
           <li>
-            [무인배반 차량 없음] 선택 시 예약자에게 무인배반차 취소 알림이
-            발송됩니다.
+            [무인배반 차량 없음] 선택 시 일반 배차방식으로 전환되며 예약자에게
+            무인배반차 취소 알림이 발송됩니다.
           </li>
           <li>
             차량 선택 후 [차량 확정] 시 예약자가 모바일 체크인을 진행하며
@@ -271,6 +293,7 @@ const DecideVehicle = (props) => {
           size='large'
           className={classes.button}
           variant='contained'
+          onClick={handleClickNoVehicle}
         >
           무인배반 차량 없음
         </Button>
