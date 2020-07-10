@@ -38,7 +38,11 @@ export default ({ match }) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      {dataLoaded ? <DecideVehicle bookingData={bookingData} /> : <Loading />}
+      {dataLoaded ? (
+        <DecideVehicle bookingPid={bookingPid} bookingData={bookingData} />
+      ) : (
+        <Loading />
+      )}
     </React.Fragment>
   );
 };

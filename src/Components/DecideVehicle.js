@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
@@ -9,6 +9,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   wrapIcon: {
@@ -42,26 +45,86 @@ const useStyles = makeStyles((theme) => ({
 
 const DecideVehicle = (props) => {
   const {
-    bookerName,
-    bookerContact,
-    driverName,
-    driverContact,
-    decidedCarNo,
-    fuelType,
-    modelName,
-    startAt,
-    returnAt,
-    availableVehicles,
-  } = props.bookingData;
+    bookingPid,
+    bookingData: {
+      bookerName,
+      bookerContact,
+      driverName,
+      driverContact,
+      decidedCarNo,
+      fuelType,
+      modelName,
+      startAt,
+      returnAt,
+      availableVehicles,
+      state,
+      bookingCancelStatus,
+    },
+  } = props;
 
   const [vehiclePid, setVehiclePid] = React.useState(0);
+  const [selectVehicleError, setSelectVehicleError] = React.useState(false);
   const [decided] = React.useState(
     decidedCarNo !== null && decidedCarNo.length > 0
   );
+  const cancelSelfRent = state === 'CANCEL';
+  const cancelBooking = bookingCancelStatus === 'SUCCESS';
+  const passedBooking = new Date(startAt) < new Date();
+  const canceled = cancelSelfRent || cancelBooking || passedBooking;
+  const refVehicleSelect = useRef();
   const classes = useStyles();
+
+  const [toast, setToast] = React.useState(false);
+  const [toastMessage, setToastMessage] = React.useState('');
+  const handleClose = (evt, reason) => {
+    if (reason === 'clickaway') return;
+    setToast(false);
+  };
+  const [toastSeverity, setToastSeverity] = React.useState('success');
+  const toastAlert = (message, severity = 'success') => {
+    setToastSeverity(severity);
+    setToastMessage(message);
+    setToast(true);
+  };
+
+  const handleClickDecide = () => {
+    if (vehiclePid === 0) {
+      toastAlert('차량을 선택해주세요.', 'error');
+      setSelectVehicleError(true);
+      refVehicleSelect.current.focus();
+    } else {
+      setSelectVehicleError(false);
+      requestDecide().then((result) => {
+        if (result.success) {
+          window.location.reload();
+        }
+      });
+    }
+  };
+
+  const requestDecide = () => {
+    return axios
+      .post(`${process.env.REACT_APP_ZZIMCAR_API_URL}/self-rent/decide`, {
+        bookingPid,
+        carObdPid: vehiclePid,
+      })
+      .then((response) => {
+        return response.data;
+      });
+  };
 
   return (
     <Container maxWidth='sm'>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={toast}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity={toastSeverity}>
+          {toastMessage}
+        </Alert>
+      </Snackbar>
       <Box className={classes.wrapBox}>
         <h2>무인배반 차량 확정</h2>
       </Box>
@@ -86,15 +149,52 @@ const DecideVehicle = (props) => {
         <br />
         차종: {modelName}({fuelType})
       </Box>
-      <Box display={decided ? 'block' : 'none'} className={classes.wrapBox}>
+
+      {/* 대여 시작시각 지났을 때 노출 */}
+      <Box
+        display={passedBooking ? 'block' : 'none'}
+        className={classes.wrapBox}
+      >
+        <Typography variant='button' className={classes.bold7}>
+          확정 가능 시각이 지난 예약건입니다.
+        </Typography>
+      </Box>
+
+      {/* 예약 취소되었을 때 노출 */}
+      <Box
+        display={cancelBooking ? 'block' : 'none'}
+        className={classes.wrapBox}
+      >
+        <Typography variant='button' className={classes.bold7}>
+          취소된 예약건입니다.
+        </Typography>
+      </Box>
+
+      {/* 무인배반차 취소되었을 때 노출 */}
+      <Box
+        display={!cancelBooking && cancelSelfRent ? 'block' : 'none'}
+        className={classes.wrapBox}
+      >
+        <Typography variant='button' className={classes.bold7}>
+          일반 배차로 전환된 예약건입니다.
+        </Typography>
+      </Box>
+
+      {/* 이미 차량 확정되었을 때 노출 */}
+      <Box
+        display={canceled ? 'none' : decided ? 'block' : 'none'}
+        className={classes.wrapBox}
+      >
         이미{' '}
         <Typography variant='button' className={classes.bold7}>
           {decidedCarNo}
         </Typography>{' '}
         차량으로 확정되었습니다.
       </Box>
+
+      {/* 차량 확정해야할 때 노출 */}
       <Box
-        display={decided ? 'none' : 'block'}
+        display={canceled ? 'none' : decided ? 'none' : 'block'}
         className={classes.wrapBox}
         fontSize={12}
         lineHeight={1.8}
@@ -125,11 +225,15 @@ const DecideVehicle = (props) => {
           </li>
         </Typography>
       </Box>
-      <Box display={decided ? 'none' : 'block'} className={classes.wrapBox}>
+      <Box
+        display={canceled ? 'none' : decided ? 'none' : 'block'}
+        className={classes.wrapBox}
+      >
         <FormControl
           variant='outlined'
           className={classes.formControl}
           fullWidth={true}
+          error={selectVehicleError}
         >
           <InputLabel id='demo-simple-select-outlined-label'>
             차량 선택
@@ -140,6 +244,7 @@ const DecideVehicle = (props) => {
             value={vehiclePid}
             onChange={(e) => setVehiclePid(e.target.value)}
             label='Vehicle'
+            inputRef={refVehicleSelect}
           >
             <MenuItem key={0} disabled value={0}>
               <em>차량을 선택해주세요.</em>
@@ -157,6 +262,7 @@ const DecideVehicle = (props) => {
           size='large'
           color='primary'
           className={classes.button}
+          onClick={handleClickDecide}
         >
           차량 확정
         </Button>

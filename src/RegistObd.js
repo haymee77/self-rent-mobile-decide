@@ -70,7 +70,7 @@ export default () => {
       .catch((error) => console.log(error));
   };
 
-  const toastAlert = (message, severity = 'succss') => {
+  const toastAlert = (message, severity = 'success') => {
     setToastSeverity(severity);
     setToastMessage(message);
     setToast(true);
