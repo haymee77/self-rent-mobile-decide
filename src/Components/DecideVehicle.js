@@ -117,7 +117,7 @@ const DecideVehicle = (props) => {
   const requestCancel = () => {
     return axios
       .get(
-        `${process.env.REACT_APP_ZZIMCAR_API_URL}/self-rent/cancel/${bookingPid}`
+        `${process.env.REACT_APP_ZZIMCAR_API_URL}/self-rent/admin/cancel/${bookingPid}`
       )
       .then((response) => {
         return response.data;
@@ -126,7 +126,7 @@ const DecideVehicle = (props) => {
 
   const requestDecide = () => {
     return axios
-      .post(`${process.env.REACT_APP_ZZIMCAR_API_URL}/self-rent/decide`, {
+      .post(`${process.env.REACT_APP_ZZIMCAR_API_URL}/self-rent/admin/decide`, {
         bookingPid,
         carObdPid: vehiclePid,
       })

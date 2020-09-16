@@ -9,7 +9,7 @@ import DecideVehicle from '../Components/DecideVehicle';
 const getBookingData = (bookingPid) => {
   return axios
     .get(
-      `${process.env.REACT_APP_ZZIMCAR_API_URL}/self-rent/decide/${bookingPid}`
+      `${process.env.REACT_APP_ZZIMCAR_API_URL}/self-rent/admin/decide/${bookingPid}`
     )
     .then((response) => {
       return response.data;
