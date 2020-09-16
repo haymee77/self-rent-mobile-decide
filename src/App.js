@@ -10,7 +10,7 @@ function App() {
   return (
     <Router>
       <Fragment>
-        <Route exact path='/' component={Home} />
+        <Route exact path='/home' component={Home} />
         <Route exact path='/remote-obd' component={RemoteObd} />
         <Route exact path='/regist-obd' component={RegistObd} />
         <Route exact path='/decide/:bookingPid' component={DecideVehicle} />
